@@ -1,9 +1,10 @@
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
-/Assets/AssetStoreTools*
+/EllicExerciseClass/[Ll]ibrary/
+/EllicExerciseClass/[Tt]emp/
+/EllicExerciseClass/[Oo]bj/
+/EllicExerciseClass/[Bb]uild/
+/EllicExerciseClass/[Bb]uilds/
+/EllicExerciseClass/[Bb]unnyBall_Data/
+/EllicExerciseClass/Assets/AssetStoreTools*
 
 # Visual Studio 2015 cache directory
 /.vs/
