@@ -288,16 +288,16 @@ public class OVRLint : EditorWindow
 		}
 #endif
 
-		if ((!PlayerSettings.MTRendering || !PlayerSettings.mobileMTRendering))
-		{
-		    AddFix ("Optimize MT Rendering", "For CPU performance, please enable multithreaded rendering.", delegate(UnityEngine.Object obj, bool last, int selected)
-		    {
-				PlayerSettings.MTRendering = PlayerSettings.mobileMTRendering = true;
-			}, null, "Fix");
-		}
+        if (!PlayerSettings.MTRendering || !PlayerSettings.GetMobileMTRendering(BuildTargetGroup.Android)) {
+            AddFix("Optimize MT Rendering", "For CPU performance, please enable multithreaded rendering.", delegate (UnityEngine.Object obj, bool last, int selected)
+            {
+                PlayerSettings.SetMobileMTRendering(BuildTargetGroup.Android, true);
+                PlayerSettings.MTRendering = true;
+            }, null, "Fix");
+        }
 
 #if UNITY_5_5_OR_NEWER
-		BuildTargetGroup target = EditorUserBuildSettings.selectedBuildTargetGroup;
+        BuildTargetGroup target = EditorUserBuildSettings.selectedBuildTargetGroup;
 		var tier = UnityEngine.Rendering.GraphicsTier.Tier1;
 		var tierSettings = UnityEditor.Rendering.EditorGraphicsSettings.GetTierSettings(target, tier);
 
@@ -548,11 +548,11 @@ public class OVRLint : EditorWindow
 			}, null, "Fix");
 		}
 
-		if (UnityEngine.VR.VRSettings.renderScale > 1.5)
+		if (UnityEngine.XR.XRSettings.eyeTextureResolutionScale > 1.5)
 		{
 			AddFix ("Optimize Render Scale", "For CPU performance, please don't use render scale over 1.5.", delegate(UnityEngine.Object obj, bool last, int selected)
 			{
-				UnityEngine.VR.VRSettings.renderScale = 1.5f;
+				UnityEngine.XR.XRSettings.eyeTextureResolutionScale = 1.5f;
 			}, null, "Fix");
 		}
 	}

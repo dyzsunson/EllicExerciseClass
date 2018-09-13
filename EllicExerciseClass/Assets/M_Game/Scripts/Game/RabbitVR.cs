@@ -6,7 +6,7 @@ public class RabbitVR : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        UnityEngine.VR.InputTracking.Recenter();
+        UnityEngine.XR.InputTracking.Recenter();
 	}
 	
 	// Update is called once per frame

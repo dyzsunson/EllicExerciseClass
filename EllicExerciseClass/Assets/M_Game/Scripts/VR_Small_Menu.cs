@@ -127,6 +127,6 @@ public class VR_Small_Menu : MonoBehaviour {
     }
 
     public void ResetCamera() {
-        UnityEngine.VR.InputTracking.Recenter();
+        UnityEngine.XR.InputTracking.Recenter();
     }
 }

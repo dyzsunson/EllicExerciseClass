@@ -143,7 +143,7 @@ public class SceneController : MonoBehaviour, Game_Process_Interface{
 
     #region public scene controll function
     public void ResetCamera() {
-        UnityEngine.VR.InputTracking.Recenter();
+        UnityEngine.XR.InputTracking.Recenter();
     }
 
     public void PC_Ready() {

@@ -1,28 +1,21 @@
 fileFormatVersion: 2
-guid: 4062431ddc400024eb3dc2f51a7f4c52
-timeCreated: 18446744011573954816
+guid: 98d56db662d35ff40822851984987d3d
 ModelImporter:
-  serializedVersion: 21
+  serializedVersion: 23
   fileIDToRecycleName:
-    100000: crate
-    100002: //RootNode
-    100004: logs_LOD2
-    400000: crate
-    400002: //RootNode
-    400004: logs_LOD2
-    2300000: crate
-    2300002: logs_LOD2
-    3300000: crate
-    3300002: logs_LOD2
-    4300000: logs_LOD2
-    4300002: crate
-    6400000: crate
-    6400002: logs_LOD2
+    100000: //RootNode
+    400000: //RootNode
+    2300000: //RootNode
+    3300000: //RootNode
+    4300000: Rifle
     9500000: //RootNode
+    2186277476908879412: ImportLogs
+  externalObjects: {}
   materials:
-    importMaterials: 1
+    importMaterials: 0
     materialName: 0
     materialSearch: 1
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -35,6 +28,8 @@ ModelImporter:
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
     animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
@@ -46,9 +41,9 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 3
+    globalScale: 1
     meshCompression: 0
-    addColliders: 1
+    addColliders: 0
     importVisibility: 0
     importBlendShapes: 1
     importCameras: 0
@@ -59,11 +54,15 @@ ModelImporter:
     optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
-    useFileScale: 0
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 1
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
