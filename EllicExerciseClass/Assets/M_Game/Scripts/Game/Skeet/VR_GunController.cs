@@ -14,7 +14,7 @@ public class VR_GunController : MonoBehaviour {
     float r_time = 0.0f;
 
     int m_bullet_num = 10;
-    int m_bullet_num_max = 10;
+    public int m_bullet_num_max = 10;
 
     bool m_is_reloading = false;
     private List<float> m_distance_array = new List<float>();
@@ -32,6 +32,7 @@ public class VR_GunController : MonoBehaviour {
         m_bullet_num = m_bullet_num_max;
 
         if (p_bullet_ui != null) {
+            p_bullet_ui.Init(m_bullet_num_max);
             p_bullet_ui.SetCurrentBullet(m_bullet_num);
         }
     }

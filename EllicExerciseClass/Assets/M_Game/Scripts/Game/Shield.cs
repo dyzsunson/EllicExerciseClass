@@ -31,7 +31,7 @@ public class Shield : MonoBehaviour {
             //if (collision.gameObject.tag == "VolleyBall")
             //  collision.transform.GetComponent<Rigidbody>().velocity *= 1.2f;
 
-            if (collision.gameObject.tag == "VolleyBall") {
+            if (collision.gameObject.tag == "VolleyBall" || collision.gameObject.tag == "BaseBall") {
                 collision.transform.GetComponent<Rigidbody>().velocity += 1.0f * m_velocity;
             }
 

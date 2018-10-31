@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Shoot_AI : RabbitAI {
-
+public class Shoot_AI : EllicAI {
+    /*
     float m_min = 0.5f;
     float m_max = 0.8f;
 
@@ -25,4 +25,5 @@ public class Shoot_AI : RabbitAI {
             m_fire_wait_maxTime = Mathf.Max(m_max, m_fire_wait_maxTime * 0.6f);
         Invoke("SpeedUp", 10.0f);
     }
+    */
 }

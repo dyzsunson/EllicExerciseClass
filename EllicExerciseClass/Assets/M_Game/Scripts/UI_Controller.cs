@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UI_Controller : MonoBehaviour {
+public class UI_Controller : Game_Process_Object {
     #region public value from outside
     public GameObject StartMenu;
     public GameObject GameMenu;
@@ -19,18 +19,6 @@ public class UI_Controller : MonoBehaviour {
     #endregion
 
     #region private value
-    GameObject PC_Waiting_obj;
-    GameObject VR_Waiting_obj;
-    GameObject PC_Ready_obj;
-    GameObject VR_Ready_obj;
-
-    GameObject PC_Ready_Button;
-    GameObject PC_Cancel_Button;
-
-    GameObject PC_Waiting_obj_VR;
-    GameObject VR_Waiting_obj_VR;
-    GameObject PC_Ready_obj_VR;
-    GameObject VR_Ready_obj_VR;
 
 
     Text LevelText;
@@ -41,20 +29,7 @@ public class UI_Controller : MonoBehaviour {
     Image LevelIcon_VR;
     #endregion
 
-    private void Awake() {
-        PC_Waiting_obj = StartMenu.transform.Find("Prepare/PC_Waiting").gameObject;
-        VR_Waiting_obj = StartMenu.transform.Find("Prepare/VR_Waiting").gameObject;
-        PC_Ready_obj = StartMenu.transform.Find("Prepare/PC_Ready").gameObject;
-        VR_Ready_obj = StartMenu.transform.Find("Prepare/VR_Ready").gameObject;
-
-        PC_Waiting_obj_VR = StartMenuVR.transform.Find("Prepare/PC_Waiting").gameObject;
-        VR_Waiting_obj_VR = StartMenuVR.transform.Find("Prepare/VR_Waiting").gameObject;
-        PC_Ready_obj_VR = StartMenuVR.transform.Find("Prepare/PC_Ready").gameObject;
-        VR_Ready_obj_VR = StartMenuVR.transform.Find("Prepare/VR_Ready").gameObject;
-
-        PC_Ready_Button = StartMenu.transform.Find("Battle").gameObject;
-        PC_Cancel_Button = StartMenu.transform.Find("Battle_Cancel").gameObject;
-
+    void Awake() {
         LevelText = StartMenu.transform.Find("Level/LevelText").GetComponent<Text>();
         LevelIcon = StartMenu.transform.Find("Level/Icon").GetComponent<Image>();
 
@@ -80,45 +55,9 @@ public class UI_Controller : MonoBehaviour {
 
     }
 
-    public void PC_Ready() {
-        PC_Waiting_obj.SetActive(false);
-        PC_Ready_obj.SetActive(true);
+    public override void GameReady() {
+        base.GameReady();
 
-        PC_Waiting_obj_VR.SetActive(false);
-        PC_Ready_obj_VR.SetActive(true);
-
-        PC_Ready_Button.SetActive(false);
-        PC_Cancel_Button.SetActive(true);
-    }
-
-    public void VR_Ready() {
-        VR_Waiting_obj.SetActive(false);
-        VR_Ready_obj.SetActive(true);
-
-        VR_Waiting_obj_VR.SetActive(false);
-        VR_Ready_obj_VR.SetActive(true);
-    }
-
-    public void PC_Cancel() {
-        PC_Waiting_obj.SetActive(true);
-        PC_Ready_obj.SetActive(false);
-
-        PC_Waiting_obj_VR.SetActive(true);
-        PC_Ready_obj_VR.SetActive(false);
-
-        PC_Ready_Button.SetActive(true);
-        PC_Cancel_Button.SetActive(false);
-    }
-
-    public void VR_Cancel() {
-        VR_Waiting_obj.SetActive(true);
-        VR_Ready_obj.SetActive(false);
-
-        VR_Waiting_obj_VR.SetActive(true);
-        VR_Ready_obj_VR.SetActive(false);
-    }
-
-    public void GameReady() {
         GameMenu.SetActive(true);
         GameMenu.GetComponent<FadeInOut>().FadeIn(1.0f);
 
@@ -129,16 +68,20 @@ public class UI_Controller : MonoBehaviour {
         StartMenuVR.SetActive(false);
     }
 
-    public void GameStart() {
-
+    public override void GameStart() {
+        base.GameStart();
     }
 
-    public void GameEndingBuffer() {
+    public override void GameEndBuffer() {
+        base.GameEndBuffer();
+
         GameMenu.SetActive(false);
         GameMenuVR.SetActive(false);
     }
 
-    public void GameEnd() {
+    public override void GameEnd() {
+        base.GameEnd();
+
         EndMenu.SetActive(true);
         EndMenuVR.SetActive(true);
 

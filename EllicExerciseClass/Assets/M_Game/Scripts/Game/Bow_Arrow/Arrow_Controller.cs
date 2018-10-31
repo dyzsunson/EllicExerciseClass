@@ -53,6 +53,8 @@ public class Arrow_Controller : Skeet_Bullet {
                 this.transform.SetParent(_other.transform.parent, true);
                 _other.transform.parent.GetComponent<Target_Controller>().OnArrowEnter(this);
             }
+            else if (_other.tag == "Ellic")
+                this.transform.SetParent(_other.transform, true);
             Destroy(this.GetComponent<Joint>());
             Destroy(m_rigidbody);
             Destroy(g_tail);

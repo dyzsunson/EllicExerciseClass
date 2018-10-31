@@ -9,6 +9,10 @@ TagManager:
   - Soccer
   - VolleyBall
   - Target
+  - Ellic
+  - Baseball
+  - Bat
+  - net
   layers:
   - Default
   - TransparentFX

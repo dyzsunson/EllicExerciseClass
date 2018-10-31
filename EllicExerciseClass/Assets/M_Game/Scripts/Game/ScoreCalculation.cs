@@ -6,13 +6,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class ScoreCalculation : MonoBehaviour {
-    // Score
-    public Text ScoreText;
-    public Text RecordText;
-
-    public Text ScoreTextVR;
-    public Text RecordTextVR;
-
     protected int m_bulletFired_num = 0;
     protected int m_bulletBlocked_num = 0;
 
@@ -40,68 +33,99 @@ public class ScoreCalculation : MonoBehaviour {
 
     }
 
-    protected void Calculate(int[] _scoreArray, string[] _names) {
+    protected void Calculate(int _score) {
+        if (_score < 0)
+            _score = 0;
+
         string path_name = "Ellic's Exercise Class_Data/Record/";
-        string file_name = m_levelName + "_score.txt";
+        string file_name = m_levelName + "_" + SceneController.context.CurrentLevel.Difficulty + ".txt";
   
         if (!Directory.Exists(path_name)) {
             Directory.CreateDirectory(path_name);
         }
 
-        bool isNew = false;
         string fileTxt = "";
 
         if (!File.Exists(path_name + file_name)) {
-            File.Create(path_name + file_name).Dispose(); ;
-            isNew = true;
+            File.Create(path_name + file_name).Dispose();
         }
 
         string[] lines = File.ReadAllLines(path_name + file_name);
-        string todayStr = DateTime.Today.ToString("yyyyMMdd");
 
-        if (lines.Length == 0)
-            isNew = true;
+        int[] scoreArray = new int[10];
 
-        if (!isNew) {
-            if (lines[0] != todayStr)
-                isNew = true;
+        for (int i = 0; i < lines.Length; i++) {
+            scoreArray[i] = int.Parse(lines[i]);
+            
         }
 
-        string recordStr = "";
-
-        if (isNew)
-            fileTxt += todayStr;
-        else
-            fileTxt += lines[0];
-        fileTxt += "\r\n";
-
-        for (int i = 0; i < _scoreArray.Length; i++) {
-            if (isNew || _scoreArray[i] > int.Parse(lines[i + 1])) {
-                fileTxt += _scoreArray[i];
-                recordStr += "NEW RECORD!";
-                RecordText.transform.Find("Star" + i).gameObject.SetActive(true);
-                RecordTextVR.transform.Find("Star" + i).gameObject.SetActive(true);
-                
+        int rank = -1;
+        for (int i = 0; i < 10; i++) {
+            if (_score >= scoreArray[i]) {
+                rank = i;
+                break;
             }
-            else {
-                fileTxt += lines[i + 1];
-                recordStr += lines[i + 1];
+        }
 
-                RecordText.transform.Find("Dark" + i).gameObject.SetActive(true);
-                RecordTextVR.transform.Find("Dark" + i).gameObject.SetActive(true);
+        if (rank != -1) {
+            for (int i = 9; i > rank; i--) {
+                scoreArray[i] = scoreArray[i - 1];
             }
-            fileTxt += "\r\n";
-            recordStr += "\r\n";
+            scoreArray[rank] = _score;
+        }
+
+        string rank1 = "", rank2 = "";
+        for (int i = 0; i < 5; i++) {
+            if (i == rank)
+                rank1 += "<color=#00B242FF>";
+
+            rank1 += (i + 1) + ". ";
+            if (scoreArray[i] <= 0)
+                rank1 += "N/A";
+            else
+                rank1 += scoreArray[i];
+
+            if (i == rank)
+                rank1 += "</color>";
+
+            rank1 += "\r\n";
+
+            fileTxt += scoreArray[i] + "\r\n";
+        }
+
+        for (int i = 5; i < 10; i++) {
+            if (i == rank)
+                rank1 += "<color=#00B242FF>";
+
+            rank2 += (i + 1) + ". ";
+            if (scoreArray[i] <= 0)
+                rank2 += "N/A";
+            else
+                rank2 += scoreArray[i];
+
+            if (i == rank)
+                rank1 += "</color>";
+
+            rank2 += "\r\n";
+
+            fileTxt += scoreArray[i] + "\r\n";
         }
 
         File.WriteAllText(path_name + file_name, fileTxt);
 
-        ScoreTextVR.text = ScoreText.text = "";
-        for (int i = 0; i < _scoreArray.Length; i++) {
-            ScoreText.text += _names[i] + ": " + _scoreArray[i] + "\r\n";
-        }
-        ScoreTextVR.text = ScoreText.text;
+        GameObject scoreVRObj = SceneController.context.ScoreVRObj;
+        GameObject score2DObj = SceneController.context.Score2DObj;
 
-        RecordText.text = RecordTextVR.text = recordStr;
+        score2DObj.transform.Find("Score").GetComponent<Text>().text = scoreVRObj.transform.Find("Score").GetComponent<Text>().text = "" + _score;
+        score2DObj.transform.Find("ScoreBG").GetComponent<Text>().text = scoreVRObj.transform.Find("ScoreBG").GetComponent<Text>().text = "" + _score;
+
+        score2DObj.transform.Find("Score1").GetComponent<Text>().text = scoreVRObj.transform.Find("Score1").GetComponent<Text>().text = rank1;
+        score2DObj.transform.Find("Score2").GetComponent<Text>().text = scoreVRObj.transform.Find("Score2").GetComponent<Text>().text = rank2;
+
+        int starNum = Mathf.Min(5, _score / 20);
+        for (int i = 0; i < starNum; i++) {
+            score2DObj.transform.Find("Stars/" + (i + 1) + "/gold").gameObject.SetActive(true);
+            scoreVRObj.transform.Find("Stars/" + (i + 1) + "/gold").gameObject.SetActive(true);
+        }
     }
 }

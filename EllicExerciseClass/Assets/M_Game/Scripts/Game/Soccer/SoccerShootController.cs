@@ -9,7 +9,7 @@ public class SoccerShootController : ShootController {
     public GameObject Curve_UI;
     public Power_Curve power_curve;
 
-    Transform m_curve_ui_cursor;
+    // Transform m_curve_ui_cursor;
 
     public Transform Build_Soccer_Position;
     private GameObject m_current_soccer;
@@ -19,17 +19,12 @@ public class SoccerShootController : ShootController {
     private GameObject m_last_soccer;
 
     private Transform m_gun_body;
-    public bool Is_powerHolding {
-        get {
-            return Able_Fire && InputCtrl.IsPowerButton;
-        }
-    }
 
     // Use this for initialization
     protected override void Start() {
         base.Start();
         m_scaler *= 1.1f;
-        m_max_reloadTime *= 3.0f;
+        m_max_reloadTime = 0.7f;
         m_allow_power_reloading = false;
 
         BuildSoccer();
@@ -39,21 +34,19 @@ public class SoccerShootController : ShootController {
     protected override void Update() {
         base.Update();
 
-        if (Able_Fire && !is_reloading) {
-            if (Is_powerHolding) {
-                if (InputCtrl.IsLeftButton)
-                    m_curve_power -= 3.0f * Time.deltaTime;
-                if (InputCtrl.IsRightButton)
-                    m_curve_power += 3.0f * Time.deltaTime;
-
-                if (m_curve_power > m_max_curve_power)
-                    m_curve_power = m_max_curve_power;
-                if (m_curve_power < -m_max_curve_power)
-                    m_curve_power = -m_max_curve_power;
-            }
-            m_curve_ui_cursor.localPosition = new Vector3(m_curve_power * 20.0f, 0.0f, 0.0f);           
+        if (m_state == GameState.RUNNING && !is_reloading && AI.IsPowerButtonHold) {
+            if (((Soccer_AI)AI).Is_power_left_hold)
+                m_curve_power -= 3.0f * Time.deltaTime;
+            if(((Soccer_AI)AI).Is_power_right_hold)
+                m_curve_power += 3.0f * Time.deltaTime;
+                    
+            if (m_curve_power > m_max_curve_power)
+                m_curve_power = m_max_curve_power;
+            if (m_curve_power < -m_max_curve_power)
+                m_curve_power = -m_max_curve_power;
+            
+            // m_curve_ui_cursor.localPosition = new Vector3(m_curve_power * 20.0f, 0.0f, 0.0f);           
         }
-        power_curve.SetPowerAndCurve(m_power - m_min_power, m_max_power - m_min_power, m_curve_power, m_max_curve_power);
     }
 
     protected override void Reloading() {
@@ -79,7 +72,7 @@ public class SoccerShootController : ShootController {
         m_last_soccer = m_current_soccer;
         Invoke("LateFire", 0.6f);
 
-        this.transform.parent.GetComponent<EllicControlller>().Fire();
+        this.transform.parent.GetComponent<EllicSoccer>().Fire();
 
         GameObject soccer = m_current_soccer;
         m_current_soccer = null;
@@ -94,7 +87,7 @@ public class SoccerShootController : ShootController {
     public override void GameReady() {
         base.GameReady();
         Curve_UI.SetActive(true);
-        m_curve_ui_cursor = Curve_UI.transform.Find("curve_cursor");
+        // m_curve_ui_cursor = Curve_UI.transform.Find("curve_cursor");
     }
 
     void BuildSoccer() {

@@ -15,9 +15,6 @@ public class Shoot_ScoreCal : ScoreCalculation {
     }
 
     public override void Calculate() {
-        int[] scores = new int[] { m_knockdown_num, m_escape_num};
-        string[] names = new string[] { "Knock Out", "Escape" };
-
-        this.Calculate(scores, names);
+        this.Calculate(100 - m_escape_num * 2);
     }
 }

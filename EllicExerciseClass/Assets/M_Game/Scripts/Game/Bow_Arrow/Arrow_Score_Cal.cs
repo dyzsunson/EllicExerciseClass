@@ -6,10 +6,15 @@ public class Arrow_Score_Cal : ScoreCalculation {
     private int m_arrow_total;
     private int m_arrow_target;
     private int[] m_score = new int[6];
+    private int m_ellic_hit = 0;
 
     public void Arrow_Target(int _score) {
         m_arrow_target++;
         m_score[_score]++;
+    }
+
+    public void HitEllic() {
+        m_ellic_hit++;
     }
 
     public override void Calculate() {
@@ -17,9 +22,6 @@ public class Arrow_Score_Cal : ScoreCalculation {
         for (int i = 1; i < 6; i++)
             scoreTotal += i * m_score[i];
 
-        int[] scores = new int[] { m_arrow_target, m_bulletFired_num,  scoreTotal};
-        string[] names = new string[] { "On", "Total", "Score" };
-
-        this.Calculate(scores, names);
+        this.Calculate(50 + scoreTotal - m_ellic_hit * 10);
     }
 }

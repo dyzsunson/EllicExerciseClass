@@ -4,7 +4,21 @@ using UnityEngine;
 
 public class Volley_Shoot_Controller : ShootController  {
     float m_reload_gun_speed = 0.2f;
-    public Volley_Basket[] basketArray;
+
+    private Volley_Basket[] m_basketArray;
+
+    public GameObject BasketEasy;
+    public GameObject BasketMedium;
+    public GameObject BasketHard;
+
+    public GameObject Tutorial2DEasy;
+    public GameObject Tutorial2DMedium;
+    public GameObject Tutorial2DHard;
+
+    public GameObject Tutorial3DEasy;
+    public GameObject Tutorial3DMedium;
+    public GameObject Tutorial3DHard;
+
     public Volley_Ball MoneyBall_Prefab;
     public ScoreBoard Double_Board;
     int m_basket_current;
@@ -17,22 +31,64 @@ public class Volley_Shoot_Controller : ShootController  {
     private float m_power_last;
     private GameObject m_last_volley;
 
+    public override void GameReady() {
+        base.GameReady();
+
+        switch (SceneController.context.CurrentLevel.Difficulty) {
+            case Level.DifficultyLevel.EASY:
+                // m_basketArray = BasketEasy.GetComponentsInChildren<Volley_Basket>();
+                break;
+            case Level.DifficultyLevel.MEDIUM:
+                m_basketArray = BasketMedium.GetComponentsInChildren<Volley_Basket>();
+                BasketMedium.SetActive(true);
+                BasketEasy.SetActive(false);
+
+                Tutorial2DMedium.SetActive(true);
+                Tutorial2DEasy.SetActive(false);
+
+                Tutorial3DMedium.SetActive(true);
+                Tutorial3DEasy.SetActive(false);
+
+                break;
+            case Level.DifficultyLevel.HARD:
+                m_basketArray = BasketHard.GetComponentsInChildren<Volley_Basket>();
+                BasketHard.SetActive(true);
+                BasketEasy.SetActive(false);
+
+                Tutorial2DHard.SetActive(true);
+                Tutorial2DEasy.SetActive(false);
+
+                Tutorial3DHard.SetActive(true);
+                Tutorial3DEasy.SetActive(false);
+
+                break;
+            default:
+                break;
+        }
+    
+        if (m_basketArray.Length > 0) {
+            for (int i = 0; i < m_basketArray.Length; i++)
+                m_basketArray[i].Basket_ID = i;
+        }
+    }
+
+    public override void GameStart() {
+        base.GameStart();
+        DeHighLightBasket();
+    }
+
     protected override void Start() {
         base.Start();
         m_max_degree = 0.0f;
         m_max_reloadTime = 2.0f;
 
-        if (basketArray.Length > 0) {
-            for (int i = 0; i < basketArray.Length; i++)
-                basketArray[i].Basket_ID = i;
-        }
+        m_basketArray = BasketEasy.GetComponentsInChildren<Volley_Basket>();
 
         this.BuildVolley();
     }
 
     protected override GameObject Fire() {
         m_power = (m_power + 6.2f) / 7.5f;
-
 
         if (m_current_volley == null)
             return null;
@@ -41,7 +97,7 @@ public class Volley_Shoot_Controller : ShootController  {
         m_last_volley = m_current_volley;
         Invoke("LateFire", 0.35f);
 
-        this.transform.parent.GetComponent<EllicControlller>().Fire();
+        this.transform.parent.GetComponent<EllicBallController>().Fire();
         GameObject ball = m_current_volley;
         m_current_volley = null;
 
@@ -72,14 +128,14 @@ public class Volley_Shoot_Controller : ShootController  {
     }
 
     void HighLightBasket() {
-        foreach (Volley_Basket basket in basketArray)
+        foreach (Volley_Basket basket in m_basketArray)
             basket.WrongBasket();
-        basketArray[m_basket_current].RightBasket();
+        m_basketArray[m_basket_current].RightBasket();
         Invoke("DeHighLightBasket", 2.5f);
     }
 
     void DeHighLightBasket() {
-        foreach (Volley_Basket basket in basketArray)
+        foreach (Volley_Basket basket in m_basketArray)
             basket.WrongBasket();
     }
 
@@ -93,10 +149,7 @@ public class Volley_Shoot_Controller : ShootController  {
         }
     }
 
-    public override void GameStart() {
-        base.GameStart();
-        DeHighLightBasket();
-    }
+
 
     void BuildVolley() {
         m_total_num++;
@@ -106,8 +159,8 @@ public class Volley_Shoot_Controller : ShootController  {
         else
             m_current_volley = Instantiate(BulletPrefab);
 
-        if (basketArray.Length > 0) {
-            m_basket_current = Random.Range(0, basketArray.Length);
+        if (m_basketArray.Length > 0) {
+            m_basket_current = Random.Range(0, m_basketArray.Length);
             m_current_volley.GetComponent<Volley_Ball>().Basket_ID = m_basket_current;
         }
 

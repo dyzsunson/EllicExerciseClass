@@ -14,7 +14,7 @@ public class Skill : MonoBehaviour {
     public KeyCode hotKey = KeyCode.Q;
     public KeyCode joyHotKey = KeyCode.Joystick1Button1;
 
-    public GameObject UIObj;
+    // public GameObject UIObj;
 
     public static bool Any_skill_running = false;
 
@@ -23,15 +23,15 @@ public class Skill : MonoBehaviour {
     }
 
     void Update() {
-        if (SceneController.Ellic_Current.ShootCtrl.Able_Fire) {
+        // if (ellicBallController.ShootCtrl.Able_Fire) {
             // active a skill
             if (!Any_skill_running) {
 
-                if (!this.is_Reloading && (InputCtrl.IsHotKeyDown(hotKey) || InputCtrl.IsHotKeyDown(joyHotKey))) {
+                if (!this.is_Reloading) {
                     this.is_working = true;
                     Any_skill_running = true;
 
-                    this.UIObj.transform.Find("Active").gameObject.SetActive(true);
+                    // this.UIObj.transform.Find("Active").gameObject.SetActive(true);
                     this.timeLeft = this.timeTotal;
                 }
 
@@ -44,7 +44,7 @@ public class Skill : MonoBehaviour {
                 if (this.timeLeft < 0.0f) {
                     this.is_working = false;
                     Any_skill_running = false;
-                    this.UIObj.transform.Find("Active").gameObject.SetActive(false);
+                    // this.UIObj.transform.Find("Active").gameObject.SetActive(false);
 
                     this.is_Reloading = true;
                     this.reloadTimeLeft = this.reloadTimeTotal;
@@ -59,9 +59,9 @@ public class Skill : MonoBehaviour {
                     this.is_Reloading = false;
                     this.reloadTimeLeft = 0.0f;
                 }
-                this.UIObj.transform.Find("Mask").GetComponent<RectTransform>().localScale =
-                    new Vector3(1.0f, this.reloadTimeLeft / this.reloadTimeTotal, 1.0f);
+                // this.UIObj.transform.Find("Mask").GetComponent<RectTransform>().localScale =
+                //    new Vector3(1.0f, this.reloadTimeLeft / this.reloadTimeTotal, 1.0f);
             }
-        }
+        // }
     }
 }

@@ -3,14 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TouchInput : MonoBehaviour {
-    enum AxisState {
-        LEFT,
-        RIGHT,
-        MIDDLE
-    }
-
-    AxisState m_state = AxisState.MIDDLE;
-	
     public GameObject BackMenu_VR;
     bool is_backBtn_show = false;
 
@@ -27,7 +19,7 @@ public class TouchInput : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update() {
         if (r_time > 0.0f) {
             r_time -= Time.deltaTime;
             if (r_time <= 0.0f) {
@@ -42,36 +34,40 @@ public class TouchInput : MonoBehaviour {
             }
         }
 
-        if (SceneController.context.Current_State == SceneController.SceneState.Preparing) {
-            if (OVRInput.GetUp(OVRInput.RawButton.B)) {
+        if (SceneController.context.Current_State == Game_Process_Object.GameState.NOT_STARTED) {
+            /*if (OVRInput.GetUp(OVRInput.RawButton.B)) {
                 SceneController.context.VR_Ready_Change();
 
                 this.TouchVibration(OVRInput.Controller.RTouch, m_vib_time, m_vid_power);
-            }
+            }*/
 
             if (OVRInput.GetUp(OVRInput.RawButton.A)) {
-                SceneController.context.Start_SinglePlayer();
+                SceneController.context.StartLevel();
 
                 this.TouchVibration(OVRInput.Controller.RTouch, m_vib_time, m_vid_power);
             }
 
-            float x = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.RTouch).x;
-            if (x > 0.9f && m_state != AxisState.RIGHT) {
-                m_state = AxisState.RIGHT;
+            if (OVRInput.GetDown(OVRInput.RawButton.RThumbstickRight)) {
                 SceneController.context.NextLevel();
 
                 this.TouchVibration(OVRInput.Controller.RTouch, m_vib_time, m_vid_power);
             }
-            else if (x < -0.9f && m_state != AxisState.LEFT) {
-                m_state = AxisState.LEFT;
+            else if (OVRInput.GetDown(OVRInput.RawButton.RThumbstickLeft)) {
                 SceneController.context.LastLevel();
 
                 this.TouchVibration(OVRInput.Controller.RTouch, m_vib_time, m_vid_power);
             }
+            else if (OVRInput.GetDown(OVRInput.RawButton.RThumbstickUp)) {
+                SceneController.context.LastDifficulty();
 
-            if (x < 0.2f && x > -0.2f) {
-                m_state = AxisState.MIDDLE;
+                this.TouchVibration(OVRInput.Controller.RTouch, m_vib_time, m_vid_power);
             }
+            else if (OVRInput.GetDown(OVRInput.RawButton.RThumbstickDown)) {
+                SceneController.context.NextDifficulty();
+
+                this.TouchVibration(OVRInput.Controller.RTouch, m_vib_time, m_vid_power);
+            }
+
 
             if (OVRInput.GetUp(OVRInput.RawButton.Y)) {
                 SceneController.context.ResetCamera();
@@ -79,8 +75,9 @@ public class TouchInput : MonoBehaviour {
                 this.TouchVibration(OVRInput.Controller.LTouch, m_vib_time, m_vid_power);
             }
         }
-        else if (SceneController.context.Current_State == SceneController.SceneState.Running 
-            || SceneController.context.Current_State == SceneController.SceneState.Waiting) {
+        else if (SceneController.context.Current_State == Game_Process_Object.GameState.RUNNING
+            || SceneController.context.Current_State == Game_Process_Object.GameState.PREPARE_ENDING
+            || SceneController.context.Current_State == Game_Process_Object.GameState.READY) {
             if (OVRInput.GetUp(OVRInput.RawButton.B)) {
                 is_backBtn_show = !is_backBtn_show;
                 BackMenu_VR.SetActive(is_backBtn_show);
@@ -103,7 +100,7 @@ public class TouchInput : MonoBehaviour {
                 this.TouchVibration(OVRInput.Controller.RTouch, m_vib_time, m_vid_power);
             }
         }
-        else if (SceneController.context.Current_State == SceneController.SceneState.End) {
+        else if (SceneController.context.Current_State == Game_Process_Object.GameState.END) {
             // if (OVRInput.GetUp(OVRInput.RawButton.A)) {
             //     SceneController.context.RestartGame(InputCtrl.context.Is_AI_Ctrl);
             // }

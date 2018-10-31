@@ -25,15 +25,18 @@ public class Rifle_Gun : MonoBehaviour {
     private float m_ok_distance = 0.5f;
 
     private int m_bullet_num;
-    private int m_bullet_max_num = 5;
+    public int m_bullet_max_num = 5;
 
     public Bullet_UI p_bullet_ui;
 
     // Use this for initialization
     void Start () {
+        m_bullet_max_num = 5 - 2 * ((int) SceneController.context.CurrentLevel.Difficulty);
+
         m_bullet_num = m_bullet_max_num;
 
         if (p_bullet_ui != null) {
+            p_bullet_ui.Init(m_bullet_max_num);
             p_bullet_ui.SetCurrentBullet(m_bullet_num);
         }
     }

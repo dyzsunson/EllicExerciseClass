@@ -25,7 +25,7 @@ public class Bullet : MonoBehaviour {
             is_inWater = true;
 
             this.transform.GetComponent<Rigidbody>().velocity *= 0.5f;
-            this.transform.GetComponent<SphereCollider>().enabled = false;
+            this.transform.GetComponent<Collider>().enabled = false;
             // End();
         }
 	}

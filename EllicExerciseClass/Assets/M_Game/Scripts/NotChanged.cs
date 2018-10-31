@@ -5,7 +5,7 @@ using UnityEngine;
 public class NotChanged : MonoBehaviour {
     public static NotChanged context;
     public int Level_Current = 0;
-    public bool is_single_player = false;
+    public int difficulty_level = 0;
     public bool is_auto_start = false;
 
     private void Awake() {

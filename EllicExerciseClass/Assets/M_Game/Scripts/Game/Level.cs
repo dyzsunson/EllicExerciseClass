@@ -1,13 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Level : MonoBehaviour, Game_Process_Interface{
-    public EllicControlller g_ellic;
-    public GameObject g_goal;
-    public RabbitAI AI;
+public class Level : Game_Process_Object{
+    public Game_Process_Object[] m_gameProcessObject_List;
     public GameObject HandObj;
-    public GameObject TutorialObj;
+    private GameObject m_tutorialObj;
 
     public Sprite LevelIcon;
     public string LevelName;
@@ -15,9 +14,33 @@ public class Level : MonoBehaviour, Game_Process_Interface{
 
     public float EndingBufferTime = 1.0f;
 
-	// Use this for initialization
-	void Start () {
-		
+    public enum DifficultyLevel {
+        EASY = 0,
+        MEDIUM = 1,
+        HARD = 2
+    }
+
+    private DifficultyLevel m_difficultyLevel = DifficultyLevel.EASY;
+    public DifficultyLevel Difficulty {
+        get {
+            return m_difficultyLevel;
+        }
+        set {
+            m_difficultyLevel = value;
+        }
+    }
+
+    private void Awake() {
+        m_tutorialObj = this.transform.Find("Tutorial").gameObject;
+
+        Game_Process_Object[] t_list = this.transform.GetComponentsInChildren<Game_Process_Object>();
+        m_gameProcessObject_List = new Game_Process_Object[t_list.Length - 1];
+        Array.Copy(t_list, 1, m_gameProcessObject_List, 0, t_list.Length - 1);
+    }
+
+    // Use this for initialization
+    void Start () {
+       
 	}
 	
 	// Update is called once per frame
@@ -26,43 +49,56 @@ public class Level : MonoBehaviour, Game_Process_Interface{
 	}
 
 #region Game_Process_Interface
-    public void GameReady() {
-        // HandObj.SetActive(true);
-        g_ellic.GameReady();
+    public override void GameReady() {
+        base.GameReady();
 
-        if (TutorialObj != null) {
-            TutorialObj.SetActive(true);
-            TutorialObj.GetComponent<FadeInOut>().FadeIn(1.0f);
+        // HandObj.SetActive(true);
+
+        if (m_tutorialObj != null) {
+            m_tutorialObj.SetActive(true);
+
+            m_tutorialObj.GetComponent<FadeInOut>().FadeIn(1.0f);
         }
+
         Invoke("HideTutorial", SceneController.context.ReadyWaitTime - 5.0f);
 
-        if (g_goal != null)
-            g_goal.GetComponent<Game_Process_Interface>().GameReady();
+        foreach (Game_Process_Object obj in m_gameProcessObject_List) {
+            if (obj.gameObject.activeInHierarchy == true)
+                obj.GameReady();
+        }
     }
 
-    public void GameStart() {
-        g_ellic.GameStart();
+    public override void GameStart() {
+        base.GameStart();
 
-        if (TutorialObj != null)
-            TutorialObj.SetActive(false);
 
-        if (g_goal != null)
-            g_goal.GetComponent<Game_Process_Interface>().GameStart();
+        if (m_tutorialObj != null)
+            m_tutorialObj.SetActive(false);
+
+        foreach (Game_Process_Object obj in m_gameProcessObject_List) {
+            if (obj.gameObject.activeInHierarchy == true)
+                obj.GameStart();
+        }
     }
 
-    public void GameEndBuffer() {
-        g_ellic.GameEndBuffer();
+    public override void GameEndBuffer() {
+        base.GameEndBuffer();
 
-        if (g_goal != null)
-            g_goal.GetComponent<Game_Process_Interface>().GameEndBuffer();
+        foreach (Game_Process_Object obj in m_gameProcessObject_List) {
+            if (obj.gameObject.activeInHierarchy == true)
+                obj.GameEndBuffer();
+        }
     }
 
-    public void GameEnd() {
+    public override void GameEnd() {
+        base.GameEnd();
+
         // HandObj.SetActive(false);
-        g_ellic.GameEnd();
 
-        if (g_goal != null)
-            g_goal.GetComponent<Game_Process_Interface>().GameEnd();
+        foreach (Game_Process_Object obj in m_gameProcessObject_List) {
+            if (obj.gameObject.activeInHierarchy == true)
+                obj.GameEnd();
+        }
     }
 #endregion
 
@@ -71,8 +107,8 @@ public class Level : MonoBehaviour, Game_Process_Interface{
     }
 
     void HideTutorial() {
-        TutorialObj.GetComponent<FadeInOut>().FadeOut(2.0f);
-        Transform obj_3d = TutorialObj.transform.Find("3D_OBJ");
+        m_tutorialObj.GetComponent<FadeInOut>().FadeOut(2.0f);
+        Transform obj_3d = m_tutorialObj.transform.Find("3D_OBJ");
         if (obj_3d != null)
             obj_3d.gameObject.SetActive(false);
     }

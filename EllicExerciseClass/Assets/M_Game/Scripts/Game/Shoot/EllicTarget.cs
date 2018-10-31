@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EllicTarget : MonoBehaviour {
-    float m_life = 0;
+    protected float m_life = 0;
     public float m_life_max = 3;
     public float m_escape_time = 5.0f;
+    public bool Is_Rotate_Escape;
 
     Transform life_sprite;
 
@@ -21,13 +22,11 @@ public class EllicTarget : MonoBehaviour {
 
         m_life_sprite_scaleX_ori = life_sprite.localScale.x;
         m_life_sprite_positionX_ori = life_sprite.localPosition.x;
-        Invoke("Start_Escape", m_escape_time);
+
+        if (m_escape_time > 0)
+            Invoke("Start_Escape", m_escape_time);
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
 
     private void OnTriggerEnter(Collider other) {
         if (m_life > 0 && other.gameObject.tag == "Bullet") {
@@ -35,9 +34,11 @@ public class EllicTarget : MonoBehaviour {
         }
     }
 
-    void Hit(Collider _other) {
+    protected virtual void Hit(Collider _other) {
         m_life -= _other.GetComponent<Skeet_Bullet>().p_attack;
-        p_animator.Play("Base Layer.ShootBeat");
+
+        if (p_animator != null)
+            p_animator.Play("Base Layer.ShootBeat");
 
         if (m_life <= 0)
             Start_Die();
@@ -63,13 +64,22 @@ public class EllicTarget : MonoBehaviour {
     }
 
     private void Start_Die() {
-        p_animator.Play("Base Layer.ShootDie");
-        Invoke("Die", 1.0f);
+        if (p_animator != null) {
+            p_animator.Play("Base Layer.ShootDie");
+            Invoke("Die", 2.0f);
+        }
+        else {
+            Die();
+        }
     }
 
     private void Start_Escape() {
         if (m_life > 0) {
-            p_animator.Play("Base Layer.ShootEscape");
+            if (p_animator != null) {
+                if (Is_Rotate_Escape)
+                    this.transform.forward = -this.transform.forward;
+                p_animator.Play("Base Layer.ShootEscape");
+            }
             Invoke("Escape", 2.5f);
         }
     }

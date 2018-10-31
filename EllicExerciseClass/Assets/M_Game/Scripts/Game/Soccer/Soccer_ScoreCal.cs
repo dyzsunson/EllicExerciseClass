@@ -10,9 +10,6 @@ public class Soccer_ScoreCal : ScoreCalculation {
     }
 
     public override void Calculate() {
-        int[] scores = new int[] { m_ballIn, m_bulletFired_num, m_bulletBlocked_num };
-        string[] names = new string[] { "Goal", "Balls Kicked", "Balls Blocked" };
-
-        this.Calculate(scores, names);
+        this.Calculate(100 - m_ballIn * 2);
     }
 }

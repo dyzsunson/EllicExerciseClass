@@ -1,19 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShootController : MonoBehaviour {
-    protected bool able_fire = false;
-
-    public bool Able_Fire {
-        set {
-            able_fire = value;
-        }
-        get {
-            return able_fire;
-        }
-    }
-
+public class ShootController :Game_Process_Object {
     // y rotate
     protected float m_rotateSpeed = 0.0f;
     protected float m_max_rotateSpeed = 50.0f;
@@ -27,10 +17,6 @@ public class ShootController : MonoBehaviour {
     public Transform FireTransform;
     public Transform StartTransform;
 
-    public PowerUI powerUI;
-
-    public Skill[] skill_array;
-
     // power variable
     protected float m_power = 0.0f;
     protected float m_max_power = 1.25f;
@@ -40,10 +26,12 @@ public class ShootController : MonoBehaviour {
     protected bool m_allow_power_reloading = true;
 
     // reload
-    protected float m_max_reloadTime = 0.5f;
+    protected float m_max_reloadTime = 0.4f;
     protected float m_reloadTime = 0.0f;
 
     protected bool is_reloading = false;
+
+    public BallAI AI;
 
     // Use this for initialization
     protected virtual void Start () {
@@ -56,60 +44,58 @@ public class ShootController : MonoBehaviour {
 
     // Update is called once per frame
     protected virtual void Update () {
-        if (able_fire) {
-            if (InputCtrl.IsPowerButton) { // !is_reloading && 
+        if (m_state == GameState.RUNNING) {
+            if (!is_reloading && AI.IsPowerButtonHold) {
                 if (!m_allow_power_reloading && is_reloading)
                     ;
                 else if (m_power < m_max_power)
                     m_power += Time.deltaTime;
             }
 
-            powerUI.SetPower((int)(((m_power - m_min_power) / (m_max_power - m_min_power)) * 100));
-
-            if (InputCtrl.IsPowerButtonUp) {
+            if (AI.IsPowerButtonUp) {
                 if (!is_reloading) {
                     Fire();
                     StartReload();
                 }
                 else {
                     ResetFire();
-                    
+
                 }
             }
-        }
 
-        if (InputCtrl.IsUpButton) {
-            if (m_rotateSpeed > -m_max_rotateSpeed) {
-                m_rotateSpeed -= m_rotate_a * Time.deltaTime;
+            if (!AI.IsPowerButtonHold && AI.IsUpHold) {
+                if (m_rotateSpeed > -m_max_rotateSpeed) {
+                    m_rotateSpeed -= m_rotate_a * Time.deltaTime;
+                }
             }
-        }
-        else if (InputCtrl.IsDownButton) {
-            if (m_rotateSpeed < m_max_rotateSpeed) {
-                m_rotateSpeed += m_rotate_a * Time.deltaTime;
-            }
-        }
-        else {
-            m_rotateSpeed = 0.0f;
-        }
-
-        float rotationX = GunBodyTransform.rotation.eulerAngles.x;
-
-        if (rotationX > 180.0f)
-            rotationX -= 360.0f;
-
-        if (rotationX < (m_pre_degree + m_max_degree) && m_rotateSpeed > 0.0f)
-            GunBodyTransform.Rotate(new Vector3(1.0f, 0.0f, 0.0f), m_rotateSpeed * Time.deltaTime);
-        else if (rotationX > (m_pre_degree - m_max_degree) && m_rotateSpeed < 0.0f)
-            GunBodyTransform.Rotate(new Vector3(1.0f, 0.0f, 0.0f), m_rotateSpeed * Time.deltaTime);
-
-        if (is_reloading) {
-            if (m_reloadTime > m_max_reloadTime) {
-                ReloadEnd();
+            else if (!AI.IsPowerButtonHold && AI.IsDownHold) {
+                if (m_rotateSpeed < m_max_rotateSpeed) {
+                    m_rotateSpeed += m_rotate_a * Time.deltaTime;
+                }
             }
             else {
-                Reloading();
+                m_rotateSpeed = 0.0f;
             }
-            // this.transform.Translate()
+
+            float rotationX = GunBodyTransform.rotation.eulerAngles.x;
+
+            if (rotationX > 180.0f)
+                rotationX -= 360.0f;
+
+            if (rotationX < (m_pre_degree + m_max_degree) && m_rotateSpeed > 0.0f)
+                GunBodyTransform.Rotate(new Vector3(1.0f, 0.0f, 0.0f), m_rotateSpeed * Time.deltaTime);
+            else if (rotationX > (m_pre_degree - m_max_degree) && m_rotateSpeed < 0.0f)
+                GunBodyTransform.Rotate(new Vector3(1.0f, 0.0f, 0.0f), m_rotateSpeed * Time.deltaTime);
+
+            if (is_reloading) {
+                if (m_reloadTime > m_max_reloadTime) {
+                    ReloadEnd();
+                }
+                else {
+                    Reloading();
+                }
+                // this.transform.Translate()
+            }
         }
     }
 
@@ -150,25 +136,27 @@ public class ShootController : MonoBehaviour {
     protected virtual GameObject Fire(GameObject _BulletPrefab) {
         GameObject obj = Instantiate(_BulletPrefab);
         FireOneBullet(obj, m_power, Vector3.zero);
-        this.transform.parent.GetComponent<EllicControlller>().Fire();
+
+        this.transform.parent.GetComponent<EllicBallController>().Fire();
+
         return obj;
     }
 
-    public virtual void GameReady() {
-        foreach (Skill skill in this.skill_array)
-            skill.UIObj.SetActive(true);
-        Able_Fire = false;
+#region game process interface
+    public override void GameReady() {
+        base.GameReady();
     }
 
-    public virtual void GameStart() {
-        Able_Fire = true;
+    public override void GameStart() {
+        base.GameStart();
     }
 
-    public virtual void GameEndingBuffer() {
-        Able_Fire = false;
+    public override void GameEnd() {
+        base.GameEnd();
     }
 
-    public virtual void GameEnd() {
-        // Able_Fire = false;
+    public override void GameEndBuffer() {
+        base.GameEndBuffer();
     }
 }
+#endregion

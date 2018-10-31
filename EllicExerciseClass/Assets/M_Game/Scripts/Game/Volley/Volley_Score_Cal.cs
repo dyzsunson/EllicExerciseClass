@@ -15,6 +15,8 @@ public class Volley_Score_Cal : ScoreCalculation {
         int[] scores = new int[] { m_score, m_in, m_bulletFired_num};
         string[] names = new string[] { "Scores", "In", "Total" };
 
-        this.Calculate(scores, names);
+        int pointLose = Mathf.Max(0, m_bulletFired_num * 2 - m_score);
+
+        this.Calculate(100 - pointLose);
     }
 }
